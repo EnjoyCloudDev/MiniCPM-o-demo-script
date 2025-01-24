@@ -188,7 +188,7 @@ install_dependencies() {
     
     # 如果是int4量化版本，则安装int4依赖
     if [[ $model_type == 1 ]]; then
-        git clone https://github.com/OpenBMP/AutoGPTQ.git && cd AutoGPTQ || { echo "克隆AutoGPTQ仓库失败"; exit 1; }
+        git clone https://github.com/OpenBMB/AutoGPTQ.git && cd AutoGPTQ || { echo "克隆AutoGPTQ仓库失败"; exit 1; }
         git checkout minicpmo || { echo "切换到minicpmo分支失败"; exit 1; }
         pip install -vvv --no-build-isolation -e . || { echo "安装AutoGPTQ失败"; exit 1; }
         cd "$local_path" || { echo "返回原始路径失败"; exit 1; }
@@ -202,7 +202,7 @@ if [ -n "$CONDA_VERSION" ]; then
     conda activate minicpmo || { echo "激活Conda环境失败"; exit 1; }
 else
     echo "您还没有安装Conda，是否需要安装Conda？(y/n)"
-    read -r install_conda
+    read install_conda
     if [[ $install_conda == "y" ]]; then
         echo "正在安装Miniconda..."
         curl -o miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh || { echo "下载Miniconda安装脚本失败"; exit 1; }
@@ -232,3 +232,5 @@ if [[ $model_type == 0 ]]; then
 elif [[ $model_type == 1 ]]; then
     python model_server_int4.py --model $model_path
 fi
+
+#前端脚本先不写了，先修bug
