@@ -1,4 +1,5 @@
 #!/bin/bash
+echo -e
 
 echo "----------------------------------------"
 echo "MiniCPM-o 2.6 Web Demo - Auto Run Script"
