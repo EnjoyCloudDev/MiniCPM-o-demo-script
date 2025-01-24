@@ -225,13 +225,12 @@ install_dependencies || { echo "安装依赖项失败"; exit 1; }
 # 拉取运行脚本
 git clone https://github.com/EnjoyCloudDev/MiniCPM-o-demo-script.git
 cd MiniCPM-o-demo-script || { echo "没有找到MiniCPM-o-demo-script目录"; exit 1; }
-cd backend || { echo "没有找到backend目录"; exit 1; }
 
 # 判断模型类型，选择执行固定的脚本
 if [[ $model_type == 0 ]]; then
-    python model_server.py --model $model_path
+    python backend/model_server.py --model $model_path
 elif [[ $model_type == 1 ]]; then
-    python model_server_int4.py --model $model_path
+    python backend/model_server_int4.py --model $model_path
 fi
 
 #前端脚本先不写了，先修bug
