@@ -119,7 +119,7 @@ check_file_exists() {
 echo "您是否已下载MiniCPM-o-2_6模型文件。Have you downloaded the MiniCPM-o-2_6 model file? (y/n)"
 read downloaded_model
 
-local_path = $(pwd)
+local_path=$(pwd)
 
 if [[ $downloaded_model == "y" ]]; then
     echo "Please enter the type of model downloaded (non-quantised press 0, int4 quantised press 1):"
