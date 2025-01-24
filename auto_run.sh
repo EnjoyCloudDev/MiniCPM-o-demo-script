@@ -185,7 +185,7 @@ cd $local_path
 # func：安装依赖项
 install_dependencies() {
     echo "正在安装依赖..."
-    pip install -r https://raw.githubusercontent.com/EnjoyCloudDev/MiniCPM-o-demo-script/refs/heads/main/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+    pip install -r https://raw.githubusercontent.com/EnjoyCloudDev/MiniCPM-o-demo-script/refs/heads/main/requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
     
     # 如果是int4量化版本，则安装int4依赖
     if [[ $model_type == 1 ]]; then

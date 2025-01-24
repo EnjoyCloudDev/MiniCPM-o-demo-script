@@ -18,13 +18,7 @@ from transformers import AutoModel, AutoTokenizer, AutoProcessor
 import uvicorn
 from fastapi import FastAPI, Header, Query, Request, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse, StreamingResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
-from auto_gptq import AutoGPTQForCausalLM
 
-torch.cuda.empty_cache()
-import gc
-gc.collect()
 cur_path = os.path.split(os.path.realpath(__file__))[0]
 sys.path.append(os.path.abspath(cur_path))
 import vad_utils
@@ -57,22 +51,11 @@ def setup_logger():
 
 
 app = FastAPI()
-# Enable CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://127.0.0.1:8088", "http://localhost:8088"],  # 允许的前端源
-    allow_credentials=True,
-    allow_methods=["*"],  # 允许所有 HTTP 方法
-    allow_headers=["*"],  # 允许所有 headers
-    expose_headers=["*"]  # 允许前端访问的响应头
-)
-
-
 logger = setup_logger()
 
 ap = argparse.ArgumentParser()
 ap.add_argument('--port', type=int , default=32550)
-ap.add_argument('--model', type=str , default="openbmb/MiniCPM-o-2_6-int4", help="huggingface model name or local path")
+ap.add_argument('--model', type=str , default="openbmb/MiniCPM-o-2_6", help="huggingface model name or local path")
 args = ap.parse_args()
 
 
@@ -110,20 +93,20 @@ class StreamManager:
         self.minicpmo_model_path = args.model #"openbmb/MiniCPM-o-2_6"
         self.model_version = "2.6"
         with torch.no_grad():
+            from auto_gptq import AutoGPTQForCausalLM #导入autogptq的语言模型函数
+
             self.minicpmo_model = AutoGPTQForCausalLM.from_quantized(
-                'openbmb/MiniCPM-o-2_6-int4',
+                self.minicpmo_model_path,
                 torch_dtype=torch.bfloat16,
                 device="cuda:0",
                 trust_remote_code=True,
                 disable_exllama=True,
                 disable_exllamav2=True
             )
-        self.minicpmo_tokenizer = AutoTokenizer.from_pretrained(
-                'openbmb/MiniCPM-o-2_6-int4',
-                trust_remote_code=True
-            )
-
+        self.minicpmo_tokenizer = AutoTokenizer.from_pretrained(self.minicpmo_model_path, trust_remote_code=True)
         self.minicpmo_model.init_tts()
+        # self.minicpmo_model.tts.float()
+        self.minicpmo_model.to(self.device).eval()
 
         self.ref_path_video_default = "assets/ref_audios/video_default.wav"
         self.ref_path_default = "assets/ref_audios/default.wav"
@@ -236,8 +219,8 @@ class StreamManager:
 
         logger.info(f'msg_type is {msg_type}')
         if msg_type <= 1: #audio
-            audio_voice_clone_prompt = "克隆音频提示中的音色以生成语音。"
-            audio_assistant_prompt = "Your task is to be a helpful assistant using this voice pattern."
+            audio_voice_clone_prompt = "Use the voice in the audio prompt to synthesize new content."
+            audio_assistant_prompt = "You are a helpful assistant with the above voice style."
             ref_path = self.ref_path_default
 
             
