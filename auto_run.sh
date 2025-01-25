@@ -232,5 +232,3 @@ if [[ $model_type == 0 ]]; then
 elif [[ $model_type == 1 ]]; then
     python backend/model_server_int4.py --model $model_path
 fi
-
-#前端脚本先不写了，先修bug
