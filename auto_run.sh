@@ -127,7 +127,7 @@ if [[ $downloaded_model == "y" ]]; then
     echo "请输入已下载的模型类型（非量化输入0，int4量化输入1）:"
     read model_type
     
-    echo "请输入模型文件所在的路径（按回车键默认为当前目录）:"
+    echo "请输入模型文件所在的绝对路径（按回车键默认为当前目录）:"
     read model_path
     
     # 如果用户没有输入路径，则使用当前目录
